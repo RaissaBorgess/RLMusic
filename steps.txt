@@ -1,0 +1,15 @@
+git config --global user.name RaissaBorgess
+git config --global user.email raissasantos123.rs33@gmail.com
+
+Criar o projeto:
+    npx create-expo-app@latest RLMusic --template blank (apenas na 1º vez)
+    cd RLMusic
+
+Instalar os pacotes necessarios: (primeira vez)
+    npx expo install react-dom react-native-web @expo/metro-runtime (apenas pra rodar na web)
+    npx expo install @react-native-community/slider
+    npx expo install expo-av (p audio e vídeo)
+
+Executar o projeto:
+    npx expo start --localhost --android (no celular)
+    npx expo start --web (PC)
