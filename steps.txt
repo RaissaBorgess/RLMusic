@@ -13,3 +13,6 @@ Instalar os pacotes necessarios: (primeira vez)
 Executar o projeto:
     npx expo start --localhost --android (no celular)
     npx expo start --web (PC)
+
+Baixar o proejeto
+    npm i 
