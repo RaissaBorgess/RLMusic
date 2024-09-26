@@ -1,8 +1,8 @@
-import React from 'react'
+import React, {useEffect, useRef } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import {
+    Animated,
     Dimensions,
-    FlatList,
     Image,
     SafeAreaView, 
     StyleSheet,
@@ -16,98 +16,111 @@ import songs from '../model/data'
 
 const { width, height } = Dimensions.get('window');
 
-
 const MusicPlayer = () => {
 
-    const renderSongs = ({ item, index }) => {
+    const scrollX = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        scrollX.addListener(({value}) => {
+            console.log();
+            const index = Math.round(value / width); 
+                console.log(`ScrollX : ${value} - Música: ${index}`);
+            });
+        }, []);
+
+        const renderSongs = ({ item, index }) => {
+            return (
+                <Animated.View style={styles.mainImageWrapper}>
+                  <View style={[styles.imageWrapper, styles.elevation]}>
+                    <Image source={item.artwork} style={styles.musicImage} />
+                  </View>
+                </Animated.View>
+            )
+        }
+
         return (
-            <View style={styles.mainImageWrapper}>
-              <View style={[styles.ImageWrapper, styles.elevation]}>
-                <Image
-                source={item.artwork}
-                style={styles.musicImage}
-                />
-              </View>
-            </View>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.main}>
+
+                  <Animated.FlatList
+                    renderItem={renderSongs}
+                    data={songs}
+                    keyExtractor={item => item.id}
+                    horizontal 
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    scrollEventThrottle={16}
+                    onScroll={Animated.event(
+                        [
+                            {
+                                nativeEvent: {
+                                    contentOffset: {x: scrollX},
+                                },
+                            },
+                        ],
+                        {useNativeDriver: true},
+                    )}
+                    />
+                    <View>
+                        <Text style={[styles.songContent, styles.songTitle]}>
+                            Titulo da Musica
+                        </Text>
+                        <Text style={[styles.songContent, styles.songArtist]}>
+                            Autor da Musica
+                        </Text>
+                    </View>
+
+                    <View>
+                        <Slider
+                        style={styles.progressBar}
+                        value={10}
+                        minimumValue={0}
+                        maximumValue={100}
+                        thumbTintColor='#FFD369'
+                        minimumTrackTintColor='#FFD369'
+                        maximumTrackTintColor='#FFF'
+                        onSlidingComplete={() => { }}
+                    />
+                    <View style={styles.progressLevelDuration}>
+                        <Text style={styles.progressLabelText}>00:00</Text>
+                        <Text style={styles.progressLabelText}>00:00</Text>  
+                    </View>
+                  </View>
+
+                <View style={styles.musicControlsContainer}>
+                    <TouchableOpacity onPress={() => { }}>
+                        <Ionicons name='play-skip-back-outline' size={35} color="#FFD369" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => {}}>
+                        <Ionicons name='pause-circle' size={75} color="#FFD369" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => { }}>
+                        <Ionicons name='play-skip-forward-outline' size={35} color="#FFD369" />
+                    </TouchableOpacity>
+                </View>
+                
+                </View>
+                <View style={styles.footer}>
+                  <View style={styles.iconWrapper}>
+                    <TouchableOpacity>
+                        <Ionicons name='heart-outline' size={30} color="#888888" />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Ionicons name='repeat' size={30} color="#888888" />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Ionicons name='share-outline' size={30} color="#888888" />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Ionicons name='ellipsis-horizontal' size={30} color="#888888" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <StatusBar style='light' />
+            </SafeAreaView>
         )
-    }
-
-  return (
-    <SafeAreaView style={styles.container}>
-        <View style={styles.main}>
-
-        <FlatList
-         renderItem={renderSongs}
-         data={songs}
-         keyExtractor={item => item.id}
-         horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        scrollEventThrottle={16}
-        onScroll={() => { }}
-    />
-
-    <View>
-        <Text style={[styles.songContent, styles.songTitle]}>
-            Titulo da Musica
-        </Text>
-        <Text style={[styles.songContent, styles.songArtist]}>
-            Autor da Musica
-        </Text>
-    </View>
-
-    <View>
-        <Slider
-         style={styles.progressBar}
-         value={10}
-         minimumValue={0}
-         maximumValue={100}
-         thumbTintColor='#FFD369'
-         minimumTrackTintColor='#FFD369'
-         maximumTrackTintColor='#FFF'
-         onSlidingComplete={() => { }}
-    />
-    <View style={styles.progressLevelDuration}>
-        <Text style={styles.progressLabelText}>00:00</Text>
-        <Text style={styles.progressLabelText}>00:00</Text>
-        </View>
-    </View>
-
-    <View style={styles.musicControlsContainer}>
-        <TouchableOpacity onPress={() => { }}>
-            <Ionicons name='play-skip-back-outline' size={35} color= "#FFD369"/> 
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => { }}>
-            <Ionicons name='pause-circle' size={75} color= "#FFD369"/> 
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => { }}>
-            <Ionicons name='play-skip-forward-outline' size={35} color= "#FFD369"/> 
-        </TouchableOpacity>
-        </View>
-
-    </View>
-    <View style={styles.footer}>
-        <View style={styles.iconWrapper}>
-        <TouchableOpacity>
-            <Ionicons name='heart-outline' size={30} color= "#888888"/> 
-        </TouchableOpacity>
-        <TouchableOpacity>
-            <Ionicons name='repeat' size={30} color= "#888888"/> 
-        </TouchableOpacity>
-        <TouchableOpacity>
-            <Ionicons name='share-outline' size={30} color= "#888888"/> 
-        </TouchableOpacity>
-        <TouchableOpacity>
-            <Ionicons name='ellipsis-horizontal' size={30} color= "#888888"/> 
-        </TouchableOpacity>
-        </View>
-        </View>
-      <StatusBar style='light' />
-      </SafeAreaView>
-   
-  )
-}
-
+   }
+    
 export default MusicPlayer
 
 const styles = StyleSheet.create ({
@@ -141,6 +154,10 @@ const styles = StyleSheet.create ({
         color: '#EEEEEE',
     },
     songTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+    },
+    songArtist: {
         fontSize: 16,
         fontWeight: '300',
     },
@@ -173,5 +190,18 @@ const styles = StyleSheet.create ({
         borderTopColor: '#393E45',
         borderWidth: 1,
     },
-    
+    iconWrapper: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '80%',
+    },
+    elevation: {
+        elevation: 5,
+        shadowOffset: {
+            width: 5,
+            height: 5
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 3.84
+    }
 })
